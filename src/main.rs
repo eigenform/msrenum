@@ -1,6 +1,3 @@
-//! Goofy way of enumerating "acceptable" MSRs via /dev/cpu/n/msr, where the
-//! word "acceptable" here means "cases where RDMSR doesn't fault."
-
 use std::collections::BTreeMap;
 
 // I ran through the entire 32-bit space of ECX values on my 3950X, and 
@@ -36,6 +33,10 @@ pub fn msr_close(fd: i32) {
 }
 
 /// Test an MSR.
+///
+/// - If a read succeeds, the MSR is visible
+/// - If a read returns `-EIO`, the MSR is not visible [or simply invalid]
+///
 pub fn msr_read(fd: i32, msr: u32) -> Result<u64, &'static str> {
     let mut buf = [0u8; 8];
     match nix::sys::uio::pread(fd, &mut buf, msr as i64) {
@@ -80,6 +81,7 @@ fn main() -> Result<(), &'static str> {
             output.insert(msr, val);
         }
     }
+    println!();
 
     for (msr, val) in &output {
         println!("{:08x}: {:016x}", msr, val);

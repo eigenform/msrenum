@@ -1,5 +1,4 @@
-# msrfuzz-rs
+# msrenum
 
-Absolutely horrible program that you can use for enumerating all of the 
-"valid" (non-faulting) MSR numbers on your Linux machine. Just don't use this.
+Simple tool for using `/dev/cpu/<n>/msr` to enumerate visible MSRs.
 
